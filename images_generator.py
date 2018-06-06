@@ -7,13 +7,13 @@ import argparse
 import sys
 
 # Examplo (mesma linha hehe):
-# python images_generator.py 
-# --path "Caminho\\dos\\dados" 
-# --format png 
-# --quantity 100 
-# --angle 45 
-# --blur 20 20 
-# --width 10 11 
+# python images_generator.py
+# --path "Caminho\\dos\\dados"
+# --format png
+# --quantity 100
+# --angle 45
+# --blur 20 20
+# --width 10 11
 # --height 10 12
 
 parser = argparse.ArgumentParser(
@@ -33,24 +33,30 @@ parser.add_argument('--width', metavar='s', nargs='+',
 parser.add_argument('--height', metavar='h', nargs='+',
                     type=int, help='Altura minima e maxima do resize')
 
+
 def rotate_image(img, angle):
     (rows, cols, ch) = img.shape
     M = cv2.getRotationMatrix2D((cols/2, rows/2), angle, 1)
     return cv2.warpAffine(img, M, (cols, rows))
 
+
 def resize_image(img, size):
     return cv2.resize(img, size)
+
 
 def apply_blur(img, blur):
     return cv2.blur(img, blur)
 
+
 def numeric_image_path(pathstring, n):
     return pathstring + "_" + str(n) + ".png"
+
 
 def get_image_name(pathstring):
     imgname = pathstring.split('\\')[-1]
     imgname = imgname.split('.')[0]
     return imgname
+
 
 if __name__ == '__main__':
     args = parser.parse_args()
@@ -74,20 +80,15 @@ if __name__ == '__main__':
         cv2.imwrite(numeric_image_path(final_path, 0),  cv2.imread(imgpath))
 
         for x in range(1, quantity):
-            image=cv2.imread(imgpath)
-
-            angle=np.random.randint(
+            image = cv2.imread(imgpath)
+            angle = np.random.randint(
                 0-(args.angle), args.angle) if args.angle else None
-            modified_image=rotate_image(image, angle = angle)
-
+            modified_image = rotate_image(image, angle=angle)
             if blur:
-                modified_image=apply_blur(modified_image, blur = blur)
-
+                modified_image = apply_blur(modified_image, blur=blur)
             if args.width and args.height:
-                width=np.random.randint(args.width[0], args.width[1])
-                height=np.random.randint(args.height[0], args.height[1])
-                modified_image=resize_image(
-                    modified_image, size = (width, height))
+                width = np.random.randint(args.width[0], args.width[1])
+                height = np.random.randint(args.height[0], args.height[1])
+                modified_image = resize_image(
+                    modified_image, size=(width, height))
             cv2.imwrite(numeric_image_path(final_path, x), modified_image)
-
-
